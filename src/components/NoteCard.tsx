@@ -1,13 +1,9 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { Note } from "../types/types";
 import Trash from "../icons/Trash";
-import {
-    autoGrow,
-    bodyParser,
-    setActiveCard,
-    setNewOffset,
-} from "../utils/utils";
+import { autoGrow, setActiveCard, setNewOffset } from "../utils/utils";
 import { UpdateNote } from "../firebase/actions";
+import Spinner from "../icons/Spinner";
 
 interface NoteCardTypes {
     note: Note;
@@ -16,10 +12,11 @@ interface NoteCardTypes {
 const NoteCard: FC<NoteCardTypes> = ({ note }) => {
     const [position, setPosition] = useState(note.position);
     const [text, setText] = useState<string>(note.note);
+    const [saving, setSaving] = useState<boolean>(false);
 
-    console.log(text);
     const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
     const cardRef = useRef<HTMLDivElement | null>(null);
+    const keyUpTimer = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         autoGrow(textAreaRef);
@@ -66,6 +63,21 @@ const NoteCard: FC<NoteCardTypes> = ({ note }) => {
         }
     };
 
+    // Debouncing logic
+    const handleKeyUp = async () => {
+        setSaving(true);
+
+        if (keyUpTimer.current) {
+            clearTimeout(keyUpTimer.current);
+        }
+
+        keyUpTimer.current = setTimeout(async () => {
+            await UpdateNote(note.noteId, { note: text }).then(() =>
+                setSaving(false)
+            );
+        }, 2000);
+    };
+
     return (
         <div
             ref={cardRef}
@@ -82,6 +94,14 @@ const NoteCard: FC<NoteCardTypes> = ({ note }) => {
                 onMouseDown={(e) => mouseDown(e)}
             >
                 <Trash size='24' />
+                {saving && (
+                    <div className='card-saving'>
+                        <Spinner color={note.colors.colorText} />
+                        <span style={{ color: note.colors.colorText }}>
+                            Saving...
+                        </span>
+                    </div>
+                )}
             </div>
             <div className='card-body'>
                 <textarea
@@ -89,7 +109,7 @@ const NoteCard: FC<NoteCardTypes> = ({ note }) => {
                     style={{
                         color: note.colors.colorText,
                     }}
-                    defaultValue={bodyParser(note.note)}
+                    defaultValue={note.note}
                     onInput={() => {
                         autoGrow(textAreaRef);
                     }}
@@ -99,6 +119,7 @@ const NoteCard: FC<NoteCardTypes> = ({ note }) => {
                     onChange={(e) => {
                         setText(e.target.value);
                     }}
+                    onKeyUp={handleKeyUp}
                 ></textarea>
             </div>
         </div>
