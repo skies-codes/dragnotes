@@ -46,6 +46,12 @@ body {
 .card-body {
     padding: 1em;
     border-radius: 0 0 5px 5px;
+    white-space: pre-wrap;
+}
+
+.card-body .note {
+    font-size: 16px;
+    white-space: pre-warp;
 }
 
 .card-body textarea {
@@ -55,6 +61,7 @@ body {
     height: 100%;
     resize: none;
     font-size: 16px;
+    white-space: pre-warp;
 }
 
 textarea:focus {

@@ -1,7 +1,13 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { Note } from "../types/types";
 import Trash from "../icons/Trash";
-import { autoGrow, setActiveCard, setNewOffset } from "../utils/utils";
+import {
+    autoGrow,
+    bodyParser,
+    setActiveCard,
+    setNewOffset,
+} from "../utils/utils";
+import { UpdateNote } from "../firebase/actions";
 
 interface NoteCardTypes {
     note: Note;
@@ -9,7 +15,9 @@ interface NoteCardTypes {
 
 const NoteCard: FC<NoteCardTypes> = ({ note }) => {
     const [position, setPosition] = useState(note.position);
+    const [text, setText] = useState<string>(note.note);
 
+    console.log(text);
     const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
     const cardRef = useRef<HTMLDivElement | null>(null);
 
@@ -46,9 +54,16 @@ const NoteCard: FC<NoteCardTypes> = ({ note }) => {
         }
     };
 
-    const mouseUp = () => {
+    const mouseUp = async () => {
         document.removeEventListener("mousemove", mouseMove);
         document.removeEventListener("mouseup", mouseUp);
+        if (cardRef.current) {
+            const newPosition = setNewOffset(cardRef.current);
+            await UpdateNote(note.noteId, {
+                note: text,
+                position: newPosition,
+            });
+        }
     };
 
     return (
@@ -71,14 +86,19 @@ const NoteCard: FC<NoteCardTypes> = ({ note }) => {
             <div className='card-body'>
                 <textarea
                     ref={textAreaRef}
-                    style={{ color: note.colors.colorText }}
-                    defaultValue={note.note}
+                    style={{
+                        color: note.colors.colorText,
+                    }}
+                    defaultValue={bodyParser(note.note)}
                     onInput={() => {
                         autoGrow(textAreaRef);
                     }}
                     onFocus={() =>
                         cardRef.current && setActiveCard(cardRef.current)
                     }
+                    onChange={(e) => {
+                        setText(e.target.value);
+                    }}
                 ></textarea>
             </div>
         </div>

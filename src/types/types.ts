@@ -1,5 +1,8 @@
+import { FieldValue } from "firebase/firestore";
+
 export interface Note {
     noteId: string;
+    userId: string;
     note: string;
     colors: {
         id: string;
@@ -8,6 +11,7 @@ export interface Note {
         colorText: string;
     };
     position: { x: number; y: number };
+    created: FieldValue;
 }
 
 export interface IconTypes {
