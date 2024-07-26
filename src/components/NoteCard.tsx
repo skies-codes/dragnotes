@@ -1,13 +1,14 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { Note } from "../types/types";
 import Trash from "../icons/Trash";
+import { setNewOffset } from "../utils/utils";
 
 interface NoteCardTypes {
     note: Note;
 }
 
 const NoteCard: FC<NoteCardTypes> = ({ note }) => {
-    const [position, setPositon] = useState(note.position);
+    const [position, setPosition] = useState(note.position);
 
     const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
     const cardRef = useRef<HTMLDivElement | null>(null);
@@ -50,10 +51,8 @@ const NoteCard: FC<NoteCardTypes> = ({ note }) => {
 
         //3 - Update card top and left position.
         if (cardRef.current) {
-            setPositon({
-                x: cardRef.current.offsetLeft - mouseMoveDir.x,
-                y: cardRef.current.offsetTop - mouseMoveDir.y,
-            });
+            const newPosition = setNewOffset(cardRef.current, mouseMoveDir);
+            setPosition(newPosition);
         }
     };
 
