@@ -1,7 +1,7 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { Note } from "../types/types";
 import Trash from "../icons/Trash";
-import { setNewOffset } from "../utils/utils";
+import { autoGrow, setActiveCard, setNewOffset } from "../utils/utils";
 
 interface NoteCardTypes {
     note: Note;
@@ -17,20 +17,13 @@ const NoteCard: FC<NoteCardTypes> = ({ note }) => {
         autoGrow(textAreaRef);
     }, []);
 
-    function autoGrow(
-        textAreaRef: React.MutableRefObject<HTMLTextAreaElement | null>
-    ) {
-        const { current } = textAreaRef;
-        if (current) {
-            current.style.height = "auto";
-            current.style.height = current.scrollHeight + "px";
-        }
-    }
-
     // draggable card position logic
     let mouseStartPos = { x: 0, y: 0 };
 
     const mouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        if (cardRef.current) {
+            setActiveCard(cardRef.current);
+        }
         mouseStartPos.x = e.clientX;
         mouseStartPos.y = e.clientY;
 
@@ -39,17 +32,14 @@ const NoteCard: FC<NoteCardTypes> = ({ note }) => {
     };
 
     const mouseMove = (e: MouseEvent) => {
-        //1 - Calculate move direction
         let mouseMoveDir = {
             x: mouseStartPos.x - e.clientX,
             y: mouseStartPos.y - e.clientY,
         };
 
-        //2 - Update start position for next move.
         mouseStartPos.x = e.clientX;
         mouseStartPos.y = e.clientY;
 
-        //3 - Update card top and left position.
         if (cardRef.current) {
             const newPosition = setNewOffset(cardRef.current, mouseMoveDir);
             setPosition(newPosition);
@@ -86,6 +76,9 @@ const NoteCard: FC<NoteCardTypes> = ({ note }) => {
                     onInput={() => {
                         autoGrow(textAreaRef);
                     }}
+                    onFocus={() =>
+                        cardRef.current && setActiveCard(cardRef.current)
+                    }
                 ></textarea>
             </div>
         </div>
