@@ -1,28 +1,26 @@
 import { useEffect, useState } from "react";
 import { Note } from "../types/types";
-import { GetNotes } from "../firebase/actions";
+import { collection, onSnapshot, query } from "firebase/firestore";
+import { db } from "../firebase/firebase";
 
 export const useNotes = (userId: string) => {
-    const [loading, setLoading] = useState<boolean>(false);
-    const [notes, setNotes] = useState<Note[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [notes, setNotes] = useState<Note[] | null>(null);
 
     useEffect(() => {
-        const fetchNotes = async () => {
-            const data = await GetNotes(userId);
-            console.log("new fetch!");
-            if (data) {
-                setNotes(data);
-                localStorage.setItem("notes", JSON.stringify(data));
-            }
-        };
+        const q = query(collection(db, "notes"));
+        let unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const notesArray: Note[] = [];
+            querySnapshot.forEach((doc) => {
+                notesArray.push(doc.data() as Note);
+            });
+            setNotes(notesArray);
+            localStorage.setItem("notes", JSON.stringify(notesArray));
+            setLoading(false);
+            console.log("tri");
+        });
 
-        const AllNotes = localStorage.getItem("notes");
-
-        if (AllNotes) {
-            setNotes(JSON.parse(AllNotes));
-        } else {
-            fetchNotes();
-        }
+        return () => unsubscribe();
     }, [userId]);
 
     return { notes, setNotes, loading, setLoading };

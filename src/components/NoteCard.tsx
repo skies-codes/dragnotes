@@ -1,9 +1,9 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { Note } from "../types/types";
-import Trash from "../icons/Trash";
 import { autoGrow, setActiveCard, setNewOffset } from "../utils/utils";
 import { UpdateNote } from "../firebase/actions";
 import Spinner from "../icons/Spinner";
+import DeleteButton from "./DeleteButton";
 
 interface NoteCardTypes {
     note: Note;
@@ -26,14 +26,17 @@ const NoteCard: FC<NoteCardTypes> = ({ note }) => {
     let mouseStartPos = { x: 0, y: 0 };
 
     const mouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        if (cardRef.current) {
-            setActiveCard(cardRef.current);
-        }
-        mouseStartPos.x = e.clientX;
-        mouseStartPos.y = e.clientY;
+        const element = e.target as HTMLDivElement;
+        if (element.className === "card-header") {
+            if (cardRef.current) {
+                setActiveCard(cardRef.current);
+            }
+            mouseStartPos.x = e.clientX;
+            mouseStartPos.y = e.clientY;
 
-        document.addEventListener("mousemove", mouseMove);
-        document.addEventListener("mouseup", mouseUp);
+            document.addEventListener("mousemove", mouseMove);
+            document.addEventListener("mouseup", mouseUp);
+        }
     };
 
     const mouseMove = (e: MouseEvent) => {
@@ -57,7 +60,6 @@ const NoteCard: FC<NoteCardTypes> = ({ note }) => {
         if (cardRef.current) {
             const newPosition = setNewOffset(cardRef.current);
             await UpdateNote(note.noteId, {
-                note: text,
                 position: newPosition,
             });
         }
@@ -93,7 +95,7 @@ const NoteCard: FC<NoteCardTypes> = ({ note }) => {
                 style={{ backgroundColor: note.colors.colorHeader }}
                 onMouseDown={(e) => mouseDown(e)}
             >
-                <Trash size='24' />
+                <DeleteButton noteId={note.noteId} />
                 {saving && (
                     <div className='card-saving'>
                         <Spinner color={note.colors.colorText} />

@@ -1,10 +1,10 @@
 import NotesPage from "./pages/NotesPage";
- 
+
 function App() {
     return (
-        <div id="app" className="app">
+        <main id='app' className='app'>
             <NotesPage />
-        </div>
+        </main>
     );
 }
 

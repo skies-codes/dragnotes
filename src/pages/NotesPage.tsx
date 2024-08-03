@@ -1,13 +1,30 @@
+import { useEffect } from "react";
 import NoteCard from "../components/NoteCard";
-import { useNotes } from "../hooks";
 import { Note } from "../types/types";
+import { AddNote } from "../firebase/actions";
+import { useProjectContext } from "../context";
+import LoaderSpinner from "../components/Loader/LoaderSpinner";
+import Controls from "../components/Controls/Controls";
 
 const NotesPage = () => {
-    const { notes } = useNotes("1");
+    const { notes, loading } = useProjectContext();
+    // useEffect(() => {
+    //     async function addData() {
+    //         await AddNote();
+    //     }
+    //     addData();
+    // }, []);
 
-    return notes.map((note: Note) => (
-        <NoteCard note={note} key={note.noteId} />
-    ));
+    return loading ? (
+        <LoaderSpinner msg='Loading your notes, please wait...' />
+    ) : (
+        <>
+            {notes?.map((note: Note) => (
+                <NoteCard note={note} key={note.noteId} />
+            ))}
+            <Controls />
+        </>
+    );
 };
 
 export default NotesPage;
