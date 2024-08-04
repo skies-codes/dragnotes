@@ -4,6 +4,7 @@ import { autoGrow, setActiveCard, setNewOffset } from "../utils/utils";
 import { UpdateNote } from "../firebase/actions";
 import Spinner from "../icons/Spinner";
 import DeleteButton from "./DeleteButton";
+import { useProjectContext } from "../context";
 
 interface NoteCardTypes {
     note: Note;
@@ -13,6 +14,9 @@ const NoteCard: FC<NoteCardTypes> = ({ note }) => {
     const [position, setPosition] = useState(note.position);
     const [text, setText] = useState<string>(note.note);
     const [saving, setSaving] = useState<boolean>(false);
+
+    // context
+    const { setSelectedNote } = useProjectContext();
 
     const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
     const cardRef = useRef<HTMLDivElement | null>(null);
@@ -28,6 +32,8 @@ const NoteCard: FC<NoteCardTypes> = ({ note }) => {
     const mouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         const element = e.target as HTMLDivElement;
         if (element.className === "card-header") {
+            setSelectedNote(note.noteId);
+
             if (cardRef.current) {
                 setActiveCard(cardRef.current);
             }
@@ -115,9 +121,10 @@ const NoteCard: FC<NoteCardTypes> = ({ note }) => {
                     onInput={() => {
                         autoGrow(textAreaRef);
                     }}
-                    onFocus={() =>
-                        cardRef.current && setActiveCard(cardRef.current)
-                    }
+                    onFocus={() => {
+                        cardRef.current && setActiveCard(cardRef.current);
+                        setSelectedNote(note.noteId);
+                    }}
                     onChange={(e) => {
                         setText(e.target.value);
                     }}

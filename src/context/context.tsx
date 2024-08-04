@@ -1,4 +1,4 @@
-import React, { createContext } from "react";
+import React, { createContext, useState } from "react";
 import { ContextType } from "../types/types";
 import { useNotes } from "../hooks";
 
@@ -7,11 +7,14 @@ export const Context = createContext<ContextType>({
     setNotes: () => {},
     loading: false,
     setLoading: () => {},
+    selectedNote: null,
+    setSelectedNote: () => {},
 });
 
 export const AppContext: React.FC<{ children: React.ReactNode }> = ({
     children,
 }) => {
+    const [selectedNote, setSelectedNote] = useState<string | null>(null);
     const { notes, setNotes, loading, setLoading } = useNotes("ak");
 
     return (
@@ -21,6 +24,8 @@ export const AppContext: React.FC<{ children: React.ReactNode }> = ({
                 setNotes,
                 loading,
                 setLoading,
+                selectedNote,
+                setSelectedNote,
             }}
         >
             {children}

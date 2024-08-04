@@ -29,7 +29,7 @@ export const AddNote = async (userId: string, note?: string) => {
         };
         const docRef = doc(db, "notes", noteId);
         await setDoc(docRef, data);
-        console.log("Created a new note.");
+        // console.log("Created a new note.");
     } catch (error) {
         console.error("Error adding project: ", error);
         throw new Error(`Error updating Note ${error}`);
@@ -58,7 +58,7 @@ export const UpdateNote = async (
     try {
         const docRef = doc(db, "notes", noteId);
         await updateDoc(docRef, fieldsToUpdate);
-        console.log("note updated");
+        // console.log("note updated");
     } catch (error) {
         console.error("Error while updating document: ", error);
         throw new Error(`Error updating Note ${error}`);
@@ -69,7 +69,7 @@ export const DeleteNote = async (noteId: string) => {
     try {
         const docRef = doc(db, "notes", noteId);
         await deleteDoc(docRef);
-        console.log("Document successfully deleted!");
+        // console.log("Document successfully deleted!");
     } catch (error) {
         console.error("Error deleting document: ", error);
     }

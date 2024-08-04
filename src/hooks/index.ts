@@ -17,7 +17,6 @@ export const useNotes = (userId: string) => {
             setNotes(notesArray);
             localStorage.setItem("notes", JSON.stringify(notesArray));
             setLoading(false);
-            console.log("tri");
         });
 
         return () => unsubscribe();
