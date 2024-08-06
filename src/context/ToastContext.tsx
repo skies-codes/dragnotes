@@ -1,6 +1,6 @@
 import React, { createContext, useState, useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { ToastContextType, ToastType } from "../types/types";
+import { AddToastType, ToastContextType, ToastType } from "../types/types";
 
 const defaultContextValue: ToastContextType = {
     toasts: [],
@@ -14,8 +14,8 @@ export const ToastContext =
 export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
     const [toasts, setToasts] = useState<ToastType[]>([]);
 
-    const addToast = useCallback(
-        (message: string, duration: number = 3000, type: string = "info") => {
+    const addToast: AddToastType = useCallback(
+        (message, duration = 3000, type = "info") => {
             const id = uuidv4();
             setToasts((prevToasts: ToastType[]) => [
                 ...prevToasts,

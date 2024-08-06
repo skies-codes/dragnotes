@@ -10,11 +10,25 @@ import {
     where,
 } from "firebase/firestore";
 import { db } from "./firebase";
-import { Note } from "../types/types";
+import { Note, UserType } from "../types/types";
 import colors from "../assets/colors.json";
 import { v4 as uuidv4 } from "uuid";
 
-// This is a comment gamers
+export const createUser = async (user: UserType) => {
+    try {
+        const docRef = doc(db, "users", user.userId);
+        await setDoc(docRef, user);
+    } catch (error) {
+        console.error("Error while creating new user: ", error);
+        throw new Error(`Error while creating new user: ${error}`);
+    }
+};
+
+/**
+ * This function will add note into your firebase database.
+ * @param userId string [required]
+ * @param note string
+ */
 
 export const AddNote = async (userId: string, note?: string) => {
     try {

@@ -1,13 +1,7 @@
-import NotesPage from "./pages/NotesPage";
-import ToastContainer from "./components/Toast/ToastContainer";
+import RootLayout from "./components/Layout/RootLayout/RootLayout";
 
 function App() {
-    return (
-        <main id='app' className='app'>
-            <ToastContainer />
-            <NotesPage />
-        </main>
-    );
+    return <RootLayout />;
 }
 
 export default App;

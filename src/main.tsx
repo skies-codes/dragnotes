@@ -3,11 +3,14 @@ import App from "./App.tsx";
 import "./index.css";
 import { AppContext } from "./context/context.tsx";
 import { ToastProvider } from "./context/ToastContext.tsx";
+import { UserContextProvider } from "./context/UserContext.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-    <ToastProvider>
-        <AppContext>
-            <App />
-        </AppContext>
-    </ToastProvider>
+    <UserContextProvider>
+        <ToastProvider>
+            <AppContext>
+                <App />
+            </AppContext>
+        </ToastProvider>
+    </UserContextProvider>
 );
