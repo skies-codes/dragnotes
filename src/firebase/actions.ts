@@ -17,7 +17,8 @@ import { v4 as uuidv4 } from "uuid";
 export const createUser = async (user: UserType) => {
     try {
         const docRef = doc(db, "users", user.userId);
-        await setDoc(docRef, user);
+        const response = await setDoc(docRef, user);
+        return response;
     } catch (error) {
         console.error("Error while creating new user: ", error);
         throw new Error(`Error while creating new user: ${error}`);

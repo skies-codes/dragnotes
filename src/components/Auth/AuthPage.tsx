@@ -2,12 +2,28 @@ import { signInWithPopup } from "firebase/auth";
 import Google from "../../icons/Google";
 import "./AuthPage.css";
 import { auth, provider } from "../../firebase/firebase";
+import { UserType } from "../../types/types";
+import { createUser } from "../../firebase/actions";
+import { useToastContext, useUserContext } from "../../context";
 
 const AuthPage = () => {
+    const { addToast } = useToastContext();
+    const { setUser } = useUserContext();
+
     const signInWithGoogle = async () => {
         try {
-            const res = await signInWithPopup(auth, provider);
-            console.log(res.user);
+            const response = await signInWithPopup(auth, provider);
+            const user: UserType = {
+                userId: response.user.uid,
+                username: response.user.displayName || "",
+                email: response.user.email || "",
+                profileImg: response.user.photoURL || "/defaultpfp.png",
+            };
+            await createUser(user).then(() => {
+                addToast("Successfully logged in", 2000, "success");
+                localStorage.setItem("userSession", JSON.stringify(user));
+                setUser(user);
+            });
         } catch (error) {
             console.log(error);
         }

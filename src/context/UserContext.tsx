@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import { UserContextType, UserType } from "../types/types";
 
 const defaultUserContextValue: UserContextType = {
@@ -17,7 +17,13 @@ export const UserContextProvider = ({
 }) => {
     const [user, setUser] = useState<UserType | null>(null);
 
-    console.log(user);
+    useEffect(() => {
+        const userData = localStorage.getItem("userSession");
+
+        if (userData) {
+            setUser(JSON.parse(userData));
+        }
+    }, []);
 
     return (
         <UserContext.Provider

@@ -18,12 +18,13 @@ export interface Color {
 }
 
 export interface IconTypes {
-    size: string;
+    size?: string;
+    width?: string;
 }
 
 export interface ContextType {
-    notes: Note[] | null;
-    setNotes: React.Dispatch<React.SetStateAction<Note[] | null>>;
+    notes: Note[];
+    setNotes: React.Dispatch<React.SetStateAction<Note[]>>;
     loading: boolean;
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
     selectedNote: string | null;
@@ -57,7 +58,6 @@ export interface UserType {
     username: string;
     email: string;
     profileImg: string;
-    created: FieldValue;
 }
 
 export interface UserContextType {
