@@ -13,7 +13,7 @@ const NotesPage = () => {
     return loading ? (
         <LoaderSpinner msg='Loading your notes, please wait...' />
     ) : (
-        <>
+        <section className='notes-page'>
             {notes.length > 0 ? (
                 notes?.map((note: Note) => (
                     <NoteCard note={note} key={note.noteId} />
@@ -29,7 +29,7 @@ const NotesPage = () => {
             )}
             <Controls />
             <UserProfile />
-        </>
+        </section>
     );
 };
 

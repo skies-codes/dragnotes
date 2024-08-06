@@ -11,7 +11,10 @@ const UserProfile = () => {
 
     return (
         <button className='user-profile' onClick={handleLogout}>
-            <img src={user?.profileImg} alt='user-profile-img' />
+            <img
+                src={user ? user.profileImg : "/defaultpfp.png"}
+                alt='user-profile-img'
+            />
             <span className='tooltip-text'>Click to logout</span>
         </button>
     );
