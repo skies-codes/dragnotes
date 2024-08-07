@@ -84,54 +84,6 @@ body {
     overflow: auto;
 }
 
-.card {
-    position: absolute;
-    z-index: 0;
-    transition: z-index 0.3s;
-    width: 400px;
-    border-radius: 5px;
-    cursor: pointer;
-    box-shadow: 0 1px 1px hsl(0deg 0% 0% / 0.075),
-        0 2px 2px hsl(0deg 0% 0% / 0.075), 0 4px 4px hsl(0deg 0% 0% / 0.075),
-        0 8px 8px hsl(0deg 0% 0% / 0.075), 0 16px 16px hsl(0deg 0% 0% / 0.075);
-}
-
-.card.active {
-    z-index: 999;
-}
-
-.card-body {
-    padding: 1em;
-    border-radius: 0 0 5px 5px;
-    white-space: pre-wrap;
-}
-
-.card-body textarea {
-    background-color: inherit;
-    border: none;
-    width: 100%;
-    height: 100%;
-    resize: none;
-    font-size: 16px;
-    white-space: pre-warp;
-}
-
-textarea:focus {
-    background-color: inherit;
-    outline: none;
-    width: 100%;
-    height: 100%;
-}
-
-.card-header {
-    background-color: #9bd1de;
-    border-radius: 5px 5px 0 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 5px;
-}
-
 @keyframes spin {
     from {
         transform: rotate(0deg);
@@ -143,16 +95,4 @@ textarea:focus {
 
 .spinner {
     animation: spin var(--spinner-animation-speed) linear infinite;
-}
-
-.card-saving {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-@media only screen and (max-width: 801px) {
-    .card {
-        width: 300px;
-    }
 }

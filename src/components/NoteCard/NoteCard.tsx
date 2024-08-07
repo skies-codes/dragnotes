@@ -1,10 +1,11 @@
 import { FC, useEffect, useRef, useState } from "react";
-import { Note } from "../types/types";
-import { autoGrow, setActiveCard, setNewOffset } from "../utils/utils";
-import { UpdateNote } from "../firebase/actions";
-import Spinner from "../icons/Spinner";
-import DeleteButton from "./DeleteButton";
-import { useProjectContext } from "../context";
+import { Note } from "../../types/types";
+import { autoGrow, setActiveCard, setNewOffset } from "../../utils/utils";
+import { UpdateNote } from "../../firebase/actions";
+import Spinner from "../../icons/Spinner";
+import DeleteButton from "../DeleteButton";
+import { useProjectContext } from "../../context";
+import "./NoteCard.css";
 
 interface NoteCardTypes {
     note: Note;

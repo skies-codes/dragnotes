@@ -1,4 +1,4 @@
-import NoteCard from "../components/NoteCard";
+import NoteCard from "../components/NoteCard/NoteCard";
 import { Note } from "../types/types";
 import { useProjectContext } from "../context";
 import LoaderSpinner from "../components/Loader/LoaderSpinner";
