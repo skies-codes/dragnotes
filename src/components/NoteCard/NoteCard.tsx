@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import { Note } from "../../types/types";
 import { autoGrow, setActiveCard, setNewOffset } from "../../utils/utils";
 import { UpdateNote } from "../../firebase/actions";
@@ -19,6 +19,7 @@ const NoteCard: FC<NoteCardTypes> = ({ note }) => {
     // context
     const { setSelectedNote } = useProjectContext();
 
+    // Ref
     const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
     const cardRef = useRef<HTMLDivElement | null>(null);
     const keyUpTimer = useRef<NodeJS.Timeout | null>(null);
@@ -30,31 +31,73 @@ const NoteCard: FC<NoteCardTypes> = ({ note }) => {
     // draggable card position logic
     let mouseStartPos = { x: 0, y: 0 };
 
-    const mouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const startDrag = (
+        e:
+            | React.MouseEvent<HTMLDivElement, MouseEvent>
+            | React.TouchEvent<HTMLDivElement>
+    ) => {
         const element = e.target as HTMLDivElement;
+
         if (element.className === "card-header") {
             setSelectedNote(note.noteId);
 
             if (cardRef.current) {
                 setActiveCard(cardRef.current);
             }
-            mouseStartPos.x = e.clientX;
-            mouseStartPos.y = e.clientY;
 
-            document.addEventListener("mousemove", mouseMove);
-            document.addEventListener("mouseup", mouseUp);
+            const isMouse = e.type === "mousedown";
+
+            if (isMouse) {
+                const startX = (e as React.MouseEvent).clientX;
+                const startY = (e as React.MouseEvent).clientY;
+
+                mouseStartPos.x = startX;
+                mouseStartPos.y = startY;
+
+                document.addEventListener("mousemove", mouseMove);
+                document.addEventListener("mouseup", mouseUp);
+            } else {
+                const startX = (e as React.TouchEvent).changedTouches[0]
+                    .clientX;
+                const startY = (e as React.TouchEvent).changedTouches[0]
+                    .clientY;
+
+                mouseStartPos.x = startX;
+                mouseStartPos.y = startY;
+
+                document.addEventListener("touchmove", mouseMove);
+                document.addEventListener("touchend", mouseUp);
+            }
         }
     };
 
-    const mouseMove = (e: MouseEvent) => {
-        let mouseMoveDir = {
-            x: mouseStartPos.x - e.clientX,
-            y: mouseStartPos.y - e.clientY,
-        };
+    const mouseMove = (e: MouseEvent | TouchEvent) => {
+        console.log(e.type);
+        let mouseMoveDir;
+        const isMouse = e.type === "mousemove";
+        if (isMouse) {
+            const startX = (e as MouseEvent).clientX;
+            const startY = (e as MouseEvent).clientY;
 
-        mouseStartPos.x = e.clientX;
-        mouseStartPos.y = e.clientY;
+            mouseMoveDir = {
+                x: mouseStartPos.x - startX,
+                y: mouseStartPos.y - startY,
+            };
 
+            mouseStartPos.x = startX;
+            mouseStartPos.y = startY;
+        } else {
+            const startX = (e as TouchEvent).changedTouches[0].clientX;
+            const startY = (e as TouchEvent).changedTouches[0].clientY;
+
+            mouseMoveDir = {
+                x: mouseStartPos.x - startX,
+                y: mouseStartPos.y - startY,
+            };
+
+            mouseStartPos.x = startX;
+            mouseStartPos.y = startY;
+        }
         if (cardRef.current) {
             const newPosition = setNewOffset(cardRef.current, mouseMoveDir);
             setPosition(newPosition);
@@ -64,6 +107,8 @@ const NoteCard: FC<NoteCardTypes> = ({ note }) => {
     const mouseUp = async () => {
         document.removeEventListener("mousemove", mouseMove);
         document.removeEventListener("mouseup", mouseUp);
+        document.removeEventListener("touchmove", mouseMove);
+        document.removeEventListener("touchend", mouseUp);
         if (cardRef.current) {
             const newPosition = setNewOffset(cardRef.current);
             await UpdateNote(note.noteId, {
@@ -100,7 +145,8 @@ const NoteCard: FC<NoteCardTypes> = ({ note }) => {
             <div
                 className='card-header'
                 style={{ backgroundColor: note.colors.colorHeader }}
-                onMouseDown={(e) => mouseDown(e)}
+                onMouseDown={(e) => startDrag(e)}
+                onTouchStart={(e) => startDrag(e)}
             >
                 <DeleteButton noteId={note.noteId} />
                 {saving && (
